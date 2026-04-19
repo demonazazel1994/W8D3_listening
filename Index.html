@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Startup Listening Practice</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #dbe3ee;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #15803d;
+      --success-bg: #ecfdf3;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --warning: #b45309;
+      --warning-bg: #fff7ed;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      background: #f8fbff;
+    }
+
+    .pill strong {
+      color: var(--primary-dark);
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid #d9e7ff;
+    }
+
+    .rules div {
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    .section-heading {
+      margin: 26px 0 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 6px solid #f59e0b;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .question-card.is-complete {
+      border-left-color: var(--success);
+    }
+
+    .question-card.submitted.correct-card {
+      border-left-color: var(--success);
+    }
+
+    .question-card.submitted.incorrect-card {
+      border-left-color: var(--danger);
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .question-number {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: 0.01em;
+    }
+
+    .status-badge {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .status-badge.required {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: #fed7aa;
+    }
+
+    .status-badge.complete {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: #bbf7d0;
+    }
+
+    .question-text {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      background: #fff;
+    }
+
+    .option:hover {
+      border-color: #9cc0ff;
+      background: #f8fbff;
+    }
+
+    .option input[type="radio"] {
+      margin-top: 3px;
+      transform: scale(1.1);
+      accent-color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .option-letter {
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-right: 6px;
+    }
+
+    .option.selected {
+      border-color: #8bb0ff;
+      background: #eff6ff;
+    }
+
+    .option.correct-answer {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .option.wrong-answer {
+      border-color: #fca5a5;
+      background: #fef2f2;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 0.96rem;
+      border: 1px solid transparent;
+    }
+
+    .feedback.correct {
+      background: var(--success-bg);
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .feedback.incorrect {
+      background: var(--danger-bg);
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .review-tools {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .review-label {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin: 0 0 10px;
+      color: var(--primary-dark);
+    }
+
+    audio {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .transcript-toggle {
+      appearance: none;
+      border: 1px solid #bfd3ff;
+      background: #eff6ff;
+      color: var(--primary-dark);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .transcript-toggle:hover {
+      background: #dbeafe;
+    }
+
+    .transcript {
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fbff;
+      border: 1px solid #d9e7ff;
+      color: #334155;
+      font-size: 0.96rem;
+      white-space: pre-wrap;
+    }
+
+    .submit-wrap {
+      margin-top: 22px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .submit-info {
+      color: var(--muted);
+      margin-bottom: 14px;
+      font-size: 0.96rem;
+    }
+
+    .warning {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .submit-btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 15px 18px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .submit-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .results {
+      margin-top: 22px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .results h2 {
+      margin: 0 0 14px;
+      font-size: 1.45rem;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-box {
+      border-radius: 18px;
+      padding: 18px;
+      background: #f8fbff;
+      border: 1px solid #d9e7ff;
+      text-align: center;
+    }
+
+    .score-box .label {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+    }
+
+    .score-box .value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .results-note {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 40px;
+      }
+
+      .hero,
+      .question-card,
+      .submit-wrap,
+      .results {
+        padding: 16px;
+      }
+
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .question-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .option {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Startup Listening Practice</h1>
+      <p>Answer all 7 questions first. After you submit, the page will show your score, unlock each audio clip, and let you reveal each transcript.</p>
+
+      <div class="top-row">
+        <div class="pill"><strong id="progressText">0 / 7</strong> questions answered</div>
+        <div class="pill">Audio locked until submission</div>
+      </div>
+
+      <div class="rules">
+        <div>• All questions are required.</div>
+        <div>• You cannot play any clip before submitting.</div>
+        <div>• After submitting, you can replay each clip and show or hide its transcript.</div>
+      </div>
+    </section>
+
+    <form id="quizForm" novalidate>
+      <div id="questionsContainer"></div>
+
+      <div class="submit-wrap">
+        <div class="submit-info" id="submitInfo">Complete all questions to unlock the Submit button.</div>
+        <div class="warning" id="formWarning" hidden>Please answer every question before submitting.</div>
+        <button id="submitBtn" class="submit-btn" type="submit" disabled>Submit answers</button>
+      </div>
+    </form>
+
+    <section id="results" class="results" hidden aria-live="polite">
+      <h2>Your Results</h2>
+      <div class="score-grid">
+        <div class="score-box">
+          <div class="label">Score</div>
+          <div class="value" id="scoreValue">0 / 7</div>
+        </div>
+        <div class="score-box">
+          <div class="label">Percentage</div>
+          <div class="value" id="percentageValue">0%</div>
+        </div>
+        <div class="score-box">
+          <div class="label">Status</div>
+          <div class="value" id="statusValue">-</div>
+        </div>
+      </div>
+      <p class="results-note" id="resultsNote">Your feedback will appear above each question.</p>
+    </section>
+  </main>
+
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        section: "Part 1",
+        type: "multiple-choice",
+        audio: "Q1.mp3",
+        timeRange: { start: "00:00:37", end: "00:00:53" },
+        transcript: "In today's lecture, we will look at three common challenges that many startups face. Getting enough funding, building the right team, and competing with other companies.",
+        question: "What are the three main challenges discussed in the lecture?",
+        options: [
+          { id: "A", text: "Delayed product launches, team conflicts, and inadequate skills" },
+          { id: "B", text: "Securing funding, building the right team, and dealing with competition" },
+          { id: "C", text: "Poor transparency, internal conflicts, and lack of training programmes" },
+          { id: "D", text: "Overpriced products, lack of transparency, and loss of credibility" }
+        ],
+        answer: "B",
+        explanation: "The lecture says the three common challenges are getting enough funding, building the right team, and competing with other companies."
+      },
+      {
+        id: 2,
+        section: "Part 1",
+        type: "multiple-choice",
+        audio: "Q2.mp3",
+        timeRange: { start: "00:01:10", end: "00:01:40" },
+        transcript: "Let's start with founding, which is often the biggest problem for startups. Turning an idea into a real product costs money. Many startups need a lot of money to develop their product. However, it is often hard to get funding at the beginning because their ideas have not been tested and future returns are not clear.",
+        question: "Why do many start-ups struggle to get enough funding?",
+        options: [
+          { id: "A", text: "They fail to market their product effectively." },
+          { id: "B", text: "Their ideas are unproven, and profits are uncertain." },
+          { id: "C", text: "Customers are unwilling to pay for their products." },
+          { id: "D", text: "Investors prefer larger and well-established companies." }
+        ],
+        answer: "B",
+        explanation: "The lecture explains that many ideas have not been tested yet and future returns are not clear."
+      },
+      {
+        id: 3,
+        section: "Part 1",
+        type: "multiple-choice",
+        audio: "Q3.mp3",
+        timeRange: { start: "00:01:49", end: "00:02:39" },
+        transcript: "One example is Nikola Motors, a company that wanted to change the trucking industry by developing hydrogen-powered trucks. The idea attracted attention, but the company did not plan its costs well. It needed much more money than expected. As a result, in 2015, the project faced long delays, and investors began to lose trust in the company. This made it harder for the company to raise more money. This lack of funding slowed the product launch and led to layoffs and lower confidence in the company.",
+        question: "What happened to Nikola Motors when it underestimated its development costs?",
+        options: [
+          { id: "A", text: "It was acquired by a larger company." },
+          { id: "B", text: "It successfully launched its product, but at a delay." },
+          { id: "C", text: "It partnered with other companies to get additional funding." },
+          { id: "D", text: "It experienced delays, layoffs, and a loss of investor confidence." }
+        ],
+        answer: "D",
+        explanation: "The lecture says Nikola Motors faced long delays, layoffs, and lower investor confidence."
+      },
+      {
+        id: 4,
+        section: "Part 1",
+        type: "multiple-choice",
+        audio: "Q4.mp3",
+        timeRange: { start: "00:03:11", end: "00:03:36" },
+        transcript: "Theranos is a famous example. The company claimed it could do blood tests using only a small drop of blood. While the idea sounded exciting, the team did not hire enough experts in medical testing. As a result, the product did not work properly.",
+        question: "What was one main problem with Theranos’ team, according to the lecture?",
+        options: [
+          { id: "A", text: "The team lacked enough funding." },
+          { id: "B", text: "The team faced strong competition." },
+          { id: "C", text: "The team lacked staff with practical laboratory testing skills." },
+          { id: "D", text: "The team struggled to attract public interest in the product." }
+        ],
+        answer: "C",
+        explanation: "The lecture says the team did not hire enough experts in medical testing."
+      },
+      {
+        id: 5,
+        section: "Part 2: Based on your notes",
+        type: "multiple-choice",
+        audio: "Q5.mp3",
+        timeRange: { start: "00:04:15", end: "00:05:06" },
+        transcript: "Juicero is a good example. This startup sold juicing machines at a high price, which was $399. This company believed people would pay more for convenience. However, many customers soon realized that they could get similar results using cheaper machines or even by squeezing the juice bags by hand. Because of this, sales dropped and the company received a lot of negative publicity. Many people criticized the product and described it as an over-engineered solution to a simple problem.",
+        question: "Why did Juicero fail to compete in the market?",
+        options: [
+          { id: "A", text: "The product was too expensive with little value." },
+          { id: "B", text: "It failed to hire experts to develop its technology." },
+          { id: "C", text: "Customers didn’t like the design of the products." },
+          { id: "D", text: "It didn’t get enough funding to promote the products." }
+        ],
+        answer: "A",
+        explanation: "Customers felt they could get similar results with much cheaper options, so the expensive product offered little extra value."
+      },
+      {
+        id: 6,
+        section: "Part 2: Based on your notes",
+        type: "multiple-choice",
+        audio: "Q6.mp3",
+        timeRange: { start: "00:05:06", end: "00:05:36" },
+        transcript: "So, how can startups deal with these challenges? One useful strategy is to use different sources of funding. Instead of depending only on venture capital, startups can explore other options. For example, crowdfunding platforms like Kickstarter allow startups to raise money directly from customers.",
+        question: "How can start-ups diversify their funding sources?",
+        options: [
+          { id: "A", text: "By taking loans from banks" },
+          { id: "B", text: "By depending on large investment firms" },
+          { id: "C", text: "By raising money from many individual clients" },
+          { id: "D", text: "By collecting financial support from their own staff" }
+        ],
+        answer: "C",
+        explanation: "The lecture gives crowdfunding as the example, which means raising money directly from many customers."
+      },
+      {
+        id: 7,
+        section: "Part 2: Based on your notes",
+        type: "multiple-choice",
+        audio: "Q7.mp3",
+        timeRange: { start: "00:05:52", end: "00:06:24" },
+        transcript: "Finally, choosing clear target customers can help a startup compete more effectively. Airbnb is a good example. Instead of competing directly with hotels, the company offered affordable and home-like places to stay. This option was attractive to travelers who wanted a more personal experience, which became a strong incentive for early growth.",
+        question: "What unique strategy helped Airbnb succeed in a competitive industry?",
+        options: [
+          { id: "A", text: "Partnering with traditional hotels for better service." },
+          { id: "B", text: "Offering long-term discounts to compete directly with hotels." },
+          { id: "C", text: "Investing in technology to improve online booking systems." },
+          { id: "D", text: "Targeting travellers who wanted cheaper and more personal stays." }
+        ],
+        answer: "D",
+        explanation: "Airbnb succeeded by offering affordable, home-like stays for travellers who wanted a more personal experience."
+      }
+    ];
+
+    const questionsContainer = document.getElementById("questionsContainer");
+    const progressText = document.getElementById("progressText");
+    const submitBtn = document.getElementById("submitBtn");
+    const submitInfo = document.getElementById("submitInfo");
+    const formWarning = document.getElementById("formWarning");
+    const quizForm = document.getElementById("quizForm");
+    const results = document.getElementById("results");
+    const scoreValue = document.getElementById("scoreValue");
+    const percentageValue = document.getElementById("percentageValue");
+    const statusValue = document.getElementById("statusValue");
+    const resultsNote = document.getElementById("resultsNote");
+
+    let submitted = false;
+
+    function renderQuestions() {
+      let html = "";
+      let currentSection = "";
+
+      quizData.forEach((q) => {
+        if (q.section !== currentSection) {
+          currentSection = q.section;
+          html += `<h2 class="section-heading">${currentSection}</h2>`;
+        }
+
+        html += `
+          <article class="question-card" id="card-${q.id}" data-question-id="${q.id}">
+            <div class="question-top">
+              <div class="question-number">Question ${q.id}</div>
+              <div class="status-badge required" id="status-${q.id}">Required</div>
+            </div>
+
+            <p class="question-text" id="question-text-${q.id}">${q.question}</p>
+
+            <div class="options" role="radiogroup" aria-labelledby="question-text-${q.id}">
+              ${q.options.map((option) => `
+                <label class="option" id="label-${q.id}-${option.id}">
+                  <input
+                    type="radio"
+                    name="q${q.id}"
+                    value="${option.id}"
+                    aria-label="Question ${q.id}, option ${option.id}"
+                  />
+                  <span><span class="option-letter">${option.id}.</span>${option.text}</span>
+                </label>
+              `).join("")}
+            </div>
+
+            <div class="feedback" id="feedback-${q.id}" hidden></div>
+
+            <div class="review-tools" id="review-${q.id}" hidden>
+              <p class="review-label">Review</p>
+              <audio controls preload="none" src="${q.audio}" data-audio-id="${q.id}"></audio>
+              <button type="button" class="transcript-toggle" data-target="transcript-${q.id}">Show transcript</button>
+              <div class="transcript" id="transcript-${q.id}" hidden>${q.transcript}</div>
+            </div>
+          </article>
+        `;
+      });
+
+      questionsContainer.innerHTML = html;
+      attachEvents();
+      updateCompletionState();
+    }
+
+    function attachEvents() {
+      const radioInputs = questionsContainer.querySelectorAll('input[type="radio"]');
+      radioInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          if (submitted) return;
+          updateOptionHighlights(input.name);
+          updateCompletionState();
+        });
+      });
+
+      const audioPlayers = questionsContainer.querySelectorAll("audio");
+      audioPlayers.forEach((audio) => {
+        audio.addEventListener("play", () => {
+          audioPlayers.forEach((other) => {
+            if (other !== audio) {
+              other.pause();
+              other.currentTime = 0;
+            }
+          });
+        });
+      });
+
+      const transcriptButtons = questionsContainer.querySelectorAll(".transcript-toggle");
+      transcriptButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = document.getElementById(button.dataset.target);
+          const isHidden = target.hidden;
+          target.hidden = !isHidden;
+          button.textContent = isHidden ? "Hide transcript" : "Show transcript";
+        });
+      });
+    }
+
+    function updateOptionHighlights(groupName) {
+      const allInputs = questionsContainer.querySelectorAll(`input[name="${groupName}"]`);
+      allInputs.forEach((input) => {
+        const label = input.closest(".option");
+        label.classList.toggle("selected", input.checked);
+      });
+    }
+
+    function answeredCount() {
+      return quizData.filter((q) => {
+        return document.querySelector(`input[name="q${q.id}"]:checked`);
+      }).length;
+    }
+
+    function updateCompletionState() {
+      const count = answeredCount();
+      progressText.textContent = `${count} / ${quizData.length}`;
+      submitBtn.disabled = submitted || count !== quizData.length;
+      submitInfo.textContent = count === quizData.length
+        ? "All questions are complete. You can now submit your answers."
+        : `Complete all questions to unlock the Submit button. ${quizData.length - count} question(s) left.`;
+
+      quizData.forEach((q) => {
+        const isAnswered = !!document.querySelector(`input[name="q${q.id}"]:checked`);
+        const card = document.getElementById(`card-${q.id}`);
+        const badge = document.getElementById(`status-${q.id}`);
+
+        card.classList.toggle("is-complete", isAnswered && !submitted);
+
+        if (!submitted) {
+          badge.textContent = isAnswered ? "Completed" : "Required";
+          badge.className = `status-badge ${isAnswered ? "complete" : "required"}`;
+        }
+      });
+
+      if (count === quizData.length) {
+        formWarning.hidden = true;
+      }
+    }
+
+    function goToFirstIncomplete() {
+      const firstIncomplete = quizData.find((q) => {
+        return !document.querySelector(`input[name="q${q.id}"]:checked`);
+      });
+
+      if (firstIncomplete) {
+        const card = document.getElementById(`card-${firstIncomplete.id}`);
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    function lockAnswers() {
+      const inputs = questionsContainer.querySelectorAll('input[type="radio"]');
+      inputs.forEach((input) => {
+        input.disabled = true;
+      });
+    }
+
+    function showResults(score) {
+      const total = quizData.length;
+      const percentage = Math.round((score / total) * 100);
+
+      scoreValue.textContent = `${score} / ${total}`;
+      percentageValue.textContent = `${percentage}%`;
+
+      let statusText = "Keep practising";
+      if (percentage === 100) {
+        statusText = "Excellent";
+      } else if (percentage >= 70) {
+        statusText = "Good job";
+      } else if (percentage >= 50) {
+        statusText = "Nice effort";
+      }
+
+      statusValue.textContent = statusText;
+      resultsNote.textContent = "Audio and transcripts are now unlocked for every question.";
+      results.hidden = false;
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    quizForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (submitted) return;
+
+      const count = answeredCount();
+      if (count !== quizData.length) {
+        formWarning.hidden = false;
+        goToFirstIncomplete();
+        return;
+      }
+
+      submitted = true;
+      formWarning.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Answers submitted";
+      lockAnswers();
+
+      let score = 0;
+
+      quizData.forEach((q) => {
+        const selectedInput = document.querySelector(`input[name="q${q.id}"]:checked`);
+        const selectedValue = selectedInput ? selectedInput.value : "";
+        const isCorrect = selectedValue === q.answer;
+        const card = document.getElementById(`card-${q.id}`);
+        const badge = document.getElementById(`status-${q.id}`);
+        const feedback = document.getElementById(`feedback-${q.id}`);
+        const review = document.getElementById(`review-${q.id}`);
+
+        if (isCorrect) score++;
+
+        card.classList.add("submitted");
+        card.classList.add(isCorrect ? "correct-card" : "incorrect-card");
+        badge.textContent = isCorrect ? "Correct" : "Check answer";
+        badge.className = `status-badge ${isCorrect ? "complete" : "required"}`;
+
+        q.options.forEach((option) => {
+          const label = document.getElementById(`label-${q.id}-${option.id}`);
+          const input = label.querySelector("input");
+
+          label.classList.remove("selected");
+
+          if (option.id === q.answer) {
+            label.classList.add("correct-answer");
+          }
+
+          if (input.checked && option.id !== q.answer) {
+            label.classList.add("wrong-answer");
+          }
+        });
+
+        feedback.hidden = false;
+        feedback.className = `feedback ${isCorrect ? "correct" : "incorrect"}`;
+        feedback.innerHTML = isCorrect
+          ? `<strong>Correct.</strong> The answer is <strong>${q.answer}</strong>. ${q.explanation}`
+          : `<strong>Not quite.</strong> The correct answer is <strong>${q.answer}</strong>. ${q.explanation}`;
+
+        review.hidden = false;
+      });
+
+      showResults(score);
+      updateCompletionState();
+    });
+
+    renderQuestions();
+  </script>
+</body>
+</html>
